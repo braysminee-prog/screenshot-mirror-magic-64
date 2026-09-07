@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, ArrowRight, Check, Minus, Plus, ShieldCheck, Trash2 } from "lucide-react";
+import { BackButton } from "@/components/orphic/back-button";
 import { TopBar } from "@/components/orphic/top-bar";
 import { BottomNav } from "@/components/orphic/bottom-nav";
 import { SellerSignature } from "@/components/orphic/seller-signature";
@@ -79,7 +80,9 @@ function CartPage() {
 
       <main className="pb-52 pt-20 md:pb-28 md:pt-28">
         <div className="mx-auto max-w-7xl px-6 md:px-10">
-          <p className="orphic-eyebrow">Keranjang</p>
+          <BackButton fallback="/" label="Kembali" />
+
+          <p className="orphic-eyebrow mt-6">Keranjang</p>
           <h1 className="orphic-display mt-3 text-[1.7rem] leading-tight text-foreground md:text-[2.3rem]">
             Tinjau sebelum lanjut
           </h1>
@@ -252,12 +255,11 @@ function EmptyCart() {
         yang kamu butuhkan.
       </p>
       <div className="mt-7 flex flex-wrap gap-3">
-        <Link
-          to="/"
+        <BackButton
+          fallback="/"
+          label="Kembali"
           className="rounded-full bg-primary px-6 py-3.5 text-[13px] font-medium text-primary-foreground transition-colors duration-300 hover:bg-primary/90"
-        >
-          Kembali ke Beranda
-        </Link>
+        />
         <Link
           to="/search"
           className="rounded-full border border-hairline px-6 py-3.5 text-[13px] text-foreground/85 transition-colors duration-300 hover:border-foreground/25"

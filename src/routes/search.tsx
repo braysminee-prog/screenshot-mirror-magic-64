@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Gamepad2, Search as SearchIcon, Store } from "lucide-react";
+import { BackButton } from "@/components/orphic/back-button";
 import { TopBar } from "@/components/orphic/top-bar";
 import { BottomNav } from "@/components/orphic/bottom-nav";
 import { SearchField } from "@/components/orphic/discovery/search-field";
@@ -102,7 +103,9 @@ function SearchPage() {
       <TopBar />
 
       <main className="mx-auto max-w-7xl px-6 pb-36 pt-24 md:px-10 md:pb-24 md:pt-32">
-        <p className="orphic-eyebrow">Discovery</p>
+        <BackButton fallback="/" label="Kembali" />
+
+        <p className="orphic-eyebrow mt-6">Discovery</p>
         <h1 className="orphic-display mt-3 text-[2rem] text-foreground md:text-5xl">
           Cari di Orphic.
         </h1>
