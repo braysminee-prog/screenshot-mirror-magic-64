@@ -634,7 +634,32 @@ function PurchaseActions({
     </button>
   );
 
-  if (compact) return button;
+  if (compact) {
+    return (
+      <div className="flex shrink-0 items-center gap-2">
+        {detail.actions.includes("cart") ? (
+          <button
+            type="button"
+            onClick={onAddToCart}
+            aria-label="Tambah ke Keranjang"
+            className={`flex size-11 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 ${
+              added
+                ? "border-seller/40 text-seller-foreground"
+                : "border-hairline text-foreground/85 hover:border-foreground/25"
+            }`}
+          >
+            {added ? (
+              <Check className="size-[18px]" strokeWidth={1.5} />
+            ) : (
+              <ShoppingBag className="size-[18px]" strokeWidth={1.5} />
+            )}
+          </button>
+        ) : null}
+        {button}
+      </div>
+    );
+  }
+
 
   return (
     <div className="border-t border-hairline pt-6">
