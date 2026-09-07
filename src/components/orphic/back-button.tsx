@@ -18,8 +18,7 @@ export function BackButton({
       type="button"
       aria-label={label}
       onClick={() => {
-        const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
-        if (idx > 0) {
+        if (router.history.canGoBack()) {
           router.history.back();
         } else {
           router.navigate({ to: fallback });
