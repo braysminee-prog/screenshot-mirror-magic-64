@@ -584,7 +584,6 @@ function ProductDetailPage() {
         </div>
       </div>
 
-      </div>
 
       <BottomNav />
     </div>
