@@ -371,6 +371,8 @@ function ProductDetailPage() {
                   detail={detail}
                   purchase={purchase}
                   onBuy={handleBuy}
+                  onAddToCart={handleAddToCart}
+                  added={added}
                   error={error}
                 />
               </div>
