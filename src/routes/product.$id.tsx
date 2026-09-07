@@ -555,6 +555,7 @@ function ProductDetailPage() {
               detail={detail}
               purchase={purchase}
               onBuy={handleBuy}
+              onAddToCart={handleAddToCart}
               error=""
               compact
             />
@@ -572,12 +573,16 @@ function PurchaseActions({
   detail,
   purchase,
   onBuy,
+  onAddToCart,
+  added = false,
   error,
   compact = false,
 }: {
   detail: ProductDetail;
   purchase: "idle" | "loading" | "done";
   onBuy: () => void;
+  onAddToCart: () => void;
+  added?: boolean;
   error: string;
   compact?: boolean;
 }) {
@@ -606,7 +611,7 @@ function PurchaseActions({
   }
 
   const label =
-    purchase === "done" ? "Pesanan dibuat" : purchase === "loading" ? "Memproses" : "Beli Sekarang";
+    purchase === "done" ? "Ke checkout" : purchase === "loading" ? "Memproses" : "Beli Sekarang";
 
   const button = (
     <button
@@ -636,6 +641,7 @@ function PurchaseActions({
         {detail.actions.includes("cart") ? (
           <button
             type="button"
+            onClick={onAddToCart}
             className="rounded-full border border-hairline px-6 py-4 text-[13.5px] text-foreground/85 transition-colors duration-300 hover:border-foreground/25"
           >
             Tambah ke Keranjang
@@ -643,10 +649,29 @@ function PurchaseActions({
         ) : null}
       </div>
       {error ? <p className="mt-3 text-[12px] text-destructive">{error}</p> : null}
-      {purchase === "done" ? (
-        <p className="mt-3 text-[12px] text-seller-foreground">
-          Prototipe: pesanan contoh berhasil dibuat, tidak ada transaksi nyata.
-        </p>
+      {added ? (
+        <div
+          role="status"
+          className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3"
+        >
+          <p className="text-[12.5px] text-foreground/85">
+            <span className="text-seller-foreground">Ditambahkan</span> — {detail.name}
+          </p>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/cart"
+              className="rounded-full bg-primary px-4 py-2 text-[12px] font-medium text-primary-foreground transition-colors duration-300 hover:bg-primary/90"
+            >
+              Lihat Keranjang
+            </Link>
+            <Link
+              to="/search"
+              className="rounded-full border border-hairline px-4 py-2 text-[12px] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+            >
+              Lanjut Belanja
+            </Link>
+          </div>
+        </div>
       ) : null}
     </div>
   );
