@@ -61,13 +61,7 @@ function CheckoutPage() {
 
       <main className="pb-52 pt-20 md:pb-28 md:pt-28">
         <div className="mx-auto max-w-7xl px-6 md:px-10">
-          <Link
-            to="/cart"
-            className="inline-flex items-center gap-2 text-[12.5px] text-muted-foreground transition-colors duration-300 hover:text-foreground"
-          >
-            <ArrowLeft className="size-4" strokeWidth={1.5} />
-            Kembali ke keranjang
-          </Link>
+          <BackButton fallback="/cart" label="Kembali" />
 
           <p className="orphic-eyebrow mt-6">Checkout</p>
           <h1 className="orphic-display mt-3 text-[1.7rem] leading-tight text-foreground md:text-[2.3rem]">
