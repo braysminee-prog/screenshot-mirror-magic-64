@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircle, ArrowRight, Check, Minus, Plus, ShieldCheck, Trash2 } from "lucide-react";
+import { BackButton } from "@/components/orphic/back-button";
 import { TopBar } from "@/components/orphic/top-bar";
 import { BottomNav } from "@/components/orphic/bottom-nav";
 import { SellerSignature } from "@/components/orphic/seller-signature";
@@ -254,12 +255,11 @@ function EmptyCart() {
         yang kamu butuhkan.
       </p>
       <div className="mt-7 flex flex-wrap gap-3">
-        <Link
-          to="/"
+        <BackButton
+          fallback="/"
+          label="Kembali"
           className="rounded-full bg-primary px-6 py-3.5 text-[13px] font-medium text-primary-foreground transition-colors duration-300 hover:bg-primary/90"
-        >
-          Kembali ke Beranda
-        </Link>
+        />
         <Link
           to="/search"
           className="rounded-full border border-hairline px-6 py-3.5 text-[13px] text-foreground/85 transition-colors duration-300 hover:border-foreground/25"

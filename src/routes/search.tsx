@@ -102,7 +102,9 @@ function SearchPage() {
       <TopBar />
 
       <main className="mx-auto max-w-7xl px-6 pb-36 pt-24 md:px-10 md:pb-24 md:pt-32">
-        <p className="orphic-eyebrow">Discovery</p>
+        <BackButton fallback="/" label="Kembali" />
+
+        <p className="orphic-eyebrow mt-6">Discovery</p>
         <h1 className="orphic-display mt-3 text-[2rem] text-foreground md:text-5xl">
           Cari di Orphic.
         </h1>
