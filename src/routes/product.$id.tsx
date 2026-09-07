@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Check,
@@ -7,12 +7,14 @@ import {
   Heart,
   Loader2,
   ShieldCheck,
+  ShoppingBag,
   Star,
 } from "lucide-react";
 import { TopBar } from "@/components/orphic/top-bar";
 import { BottomNav } from "@/components/orphic/bottom-nav";
 import { SellerSignature } from "@/components/orphic/seller-signature";
 import { MediaGallery } from "@/components/orphic/product/media-gallery";
+import { useCart } from "@/lib/orphic-cart";
 import { getProductDetail, productDetails, type ProductDetail } from "@/lib/orphic-product-detail";
 
 export const Route = createFileRoute("/product/$id")({
@@ -46,6 +48,9 @@ export const Route = createFileRoute("/product/$id")({
 function ProductDetailPage() {
   const { detail } = Route.useLoaderData();
   const router = useRouter();
+  const navigate = useNavigate();
+  const cart = useCart();
+  const addedTimer = useRef<number | undefined>(undefined);
 
   const [variantId, setVariantId] = useState(
     detail.variants ? (detail.variants.options[1]?.id ?? detail.variants.options[0]!.id) : "",
@@ -56,6 +61,9 @@ function ProductDetailPage() {
   const [userId, setUserId] = useState("");
   const [server, setServer] = useState("");
   const [error, setError] = useState("");
+  const [added, setAdded] = useState(false);
+
+  useEffect(() => () => window.clearTimeout(addedTimer.current), []);
 
   const variant = useMemo(
     () => detail.variants?.options.find((o) => o.id === variantId),
@@ -69,15 +77,44 @@ function ProductDetailPage() {
   const needsId = Boolean(detail.requiresAccountId);
   const canBuy = !detail.soldOut && detail.actions.includes("buy");
 
-  function handleBuy() {
+  function buildConfig() {
     if (needsId && (!userId.trim() || !server.trim())) {
       setError("Masukkan User ID dan Server terlebih dahulu.");
-      return;
+      return null;
     }
     setError("");
-    setPurchase("loading");
-    window.setTimeout(() => setPurchase("done"), 900);
+    return needsId ? { userId: userId.trim(), server: server.trim() } : {};
   }
+
+  function handleBuy() {
+    const config = buildConfig();
+    if (!config) return;
+    const item = cart.addItem({
+      productId: detail.id,
+      variantId: detail.variants ? variantId : undefined,
+      config,
+    });
+    cart.setDirectItemKey(item.key);
+    setPurchase("loading");
+    window.setTimeout(() => {
+      setPurchase("done");
+      navigate({ to: "/checkout" });
+    }, 500);
+  }
+
+  function handleAddToCart() {
+    const config = buildConfig();
+    if (!config) return;
+    cart.addItem({
+      productId: detail.id,
+      variantId: detail.variants ? variantId : undefined,
+      config,
+    });
+    setAdded(true);
+    window.clearTimeout(addedTimer.current);
+    addedTimer.current = window.setTimeout(() => setAdded(false), 6000);
+  }
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -335,6 +372,8 @@ function ProductDetailPage() {
                   detail={detail}
                   purchase={purchase}
                   onBuy={handleBuy}
+                  onAddToCart={handleAddToCart}
+                  added={added}
                   error={error}
                 />
               </div>
@@ -519,13 +558,32 @@ function ProductDetailPage() {
               detail={detail}
               purchase={purchase}
               onBuy={handleBuy}
+              onAddToCart={handleAddToCart}
+              added={added}
               error=""
               compact
             />
           </div>
           {error ? <p className="mt-2 text-[11px] text-destructive">{error}</p> : null}
+          {added ? (
+            <div
+              role="status"
+              className="mt-3 flex items-center justify-between gap-3 border-t border-hairline pt-3"
+            >
+              <p className="min-w-0 truncate text-[11.5px] text-foreground/85">
+                Ditambahkan — {detail.name}
+              </p>
+              <Link
+                to="/cart"
+                className="shrink-0 rounded-full bg-primary px-3.5 py-1.5 text-[11.5px] font-medium text-primary-foreground"
+              >
+                Lihat Keranjang
+              </Link>
+            </div>
+          ) : null}
         </div>
       </div>
+
 
       <BottomNav />
     </div>
@@ -536,12 +594,16 @@ function PurchaseActions({
   detail,
   purchase,
   onBuy,
+  onAddToCart,
+  added = false,
   error,
   compact = false,
 }: {
   detail: ProductDetail;
   purchase: "idle" | "loading" | "done";
   onBuy: () => void;
+  onAddToCart: () => void;
+  added?: boolean;
   error: string;
   compact?: boolean;
 }) {
@@ -570,7 +632,7 @@ function PurchaseActions({
   }
 
   const label =
-    purchase === "done" ? "Pesanan dibuat" : purchase === "loading" ? "Memproses" : "Beli Sekarang";
+    purchase === "done" ? "Ke checkout" : purchase === "loading" ? "Memproses" : "Beli Sekarang";
 
   const button = (
     <button
@@ -591,7 +653,32 @@ function PurchaseActions({
     </button>
   );
 
-  if (compact) return button;
+  if (compact) {
+    return (
+      <div className="flex shrink-0 items-center gap-2">
+        {detail.actions.includes("cart") ? (
+          <button
+            type="button"
+            onClick={onAddToCart}
+            aria-label="Tambah ke Keranjang"
+            className={`flex size-11 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 ${
+              added
+                ? "border-seller/40 text-seller-foreground"
+                : "border-hairline text-foreground/85 hover:border-foreground/25"
+            }`}
+          >
+            {added ? (
+              <Check className="size-[18px]" strokeWidth={1.5} />
+            ) : (
+              <ShoppingBag className="size-[18px]" strokeWidth={1.5} />
+            )}
+          </button>
+        ) : null}
+        {button}
+      </div>
+    );
+  }
+
 
   return (
     <div className="border-t border-hairline pt-6">
@@ -600,6 +687,7 @@ function PurchaseActions({
         {detail.actions.includes("cart") ? (
           <button
             type="button"
+            onClick={onAddToCart}
             className="rounded-full border border-hairline px-6 py-4 text-[13.5px] text-foreground/85 transition-colors duration-300 hover:border-foreground/25"
           >
             Tambah ke Keranjang
@@ -607,10 +695,29 @@ function PurchaseActions({
         ) : null}
       </div>
       {error ? <p className="mt-3 text-[12px] text-destructive">{error}</p> : null}
-      {purchase === "done" ? (
-        <p className="mt-3 text-[12px] text-seller-foreground">
-          Prototipe: pesanan contoh berhasil dibuat, tidak ada transaksi nyata.
-        </p>
+      {added ? (
+        <div
+          role="status"
+          className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3"
+        >
+          <p className="text-[12.5px] text-foreground/85">
+            <span className="text-seller-foreground">Ditambahkan</span> — {detail.name}
+          </p>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/cart"
+              className="rounded-full bg-primary px-4 py-2 text-[12px] font-medium text-primary-foreground transition-colors duration-300 hover:bg-primary/90"
+            >
+              Lihat Keranjang
+            </Link>
+            <Link
+              to="/search"
+              className="rounded-full border border-hairline px-4 py-2 text-[12px] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+            >
+              Lanjut Belanja
+            </Link>
+          </div>
+        </div>
       ) : null}
     </div>
   );

@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Bell, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
+import { useCart } from "@/lib/orphic-cart";
 
 const menuItems = [
   { label: "Beranda", to: "/" },
   { label: "Pencarian", to: "/search" },
+  { label: "Keranjang", to: "/cart" },
   { label: "Dompet", to: undefined },
   { label: "Komunitas", to: undefined },
   { label: "Shorts", to: undefined },
@@ -13,6 +15,8 @@ const menuItems = [
 
 export function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { count } = useCart();
+
 
   return (
     <>
@@ -40,13 +44,20 @@ export function TopBar() {
             >
               <Search className="size-[18px]" strokeWidth={1.5} />
             </Link>
-            <button
-              type="button"
-              aria-label="Keranjang"
-              className="flex size-10 items-center justify-center rounded-full orphic-glass text-foreground/85 transition-colors duration-300 hover:text-foreground"
+            <Link
+              to="/cart"
+              aria-label={
+                count > 0 ? `Keranjang, ${count} item` : "Keranjang, kosong"
+              }
+              className="relative flex size-10 items-center justify-center rounded-full orphic-glass text-foreground/85 transition-colors duration-300 hover:text-foreground"
             >
               <ShoppingBag className="size-[18px]" strokeWidth={1.5} />
-            </button>
+              {count > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex size-[17px] items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                  {count > 9 ? "9+" : count}
+                </span>
+              ) : null}
+            </Link>
             <button
               type="button"
               aria-label="Notifikasi, 3 belum dibaca"
