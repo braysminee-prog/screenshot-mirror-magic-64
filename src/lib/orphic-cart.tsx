@@ -19,8 +19,8 @@ export type CartConfig = { userId?: string; server?: string };
 export type CartItem = {
   key: string;
   productId: string;
-  kind: DetailKind;
-  variantId?: string;
+  kind?: DetailKind | undefined;
+  variantId?: string | undefined;
   quantity: number;
   config: CartConfig;
   selected: boolean;
@@ -31,17 +31,17 @@ export type ItemIssue = "sold-out" | "unavailable" | "invalid-config" | null;
 export type ResolvedItem = {
   item: CartItem;
   detail: ProductDetail;
-  variantName?: string;
-  variantNote?: string;
+  variantName?: string | undefined;
+  variantNote?: string | undefined;
   unitPrice: number;
   lineTotal: number;
   quantitySupported: boolean;
   issue: ItemIssue;
-  issueText?: string;
+  issueText?: string | undefined;
   ownerKey: string;
   ownerLabel: string;
   official: boolean;
-  promotedBy?: string;
+  promotedBy?: string | undefined;
   attributes: { label: string; value: string }[];
 };
 
@@ -176,9 +176,9 @@ type CartContextValue = {
   count: number;
   addItem: (input: {
     productId: string;
-    variantId?: string;
-    config?: CartConfig;
-    quantity?: number;
+    variantId?: string | undefined;
+    config?: CartConfig | undefined;
+    quantity?: number | undefined;
   }) => CartItem;
   removeItem: (key: string) => void;
   setQuantity: (key: string, quantity: number) => void;
