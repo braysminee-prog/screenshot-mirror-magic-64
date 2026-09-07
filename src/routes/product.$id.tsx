@@ -7,6 +7,7 @@ import {
   Heart,
   Loader2,
   ShieldCheck,
+  ShoppingBag,
   Star,
 } from "lucide-react";
 import { TopBar } from "@/components/orphic/top-bar";
@@ -558,12 +559,31 @@ function ProductDetailPage() {
               purchase={purchase}
               onBuy={handleBuy}
               onAddToCart={handleAddToCart}
+              added={added}
               error=""
               compact
             />
           </div>
           {error ? <p className="mt-2 text-[11px] text-destructive">{error}</p> : null}
+          {added ? (
+            <div
+              role="status"
+              className="mt-3 flex items-center justify-between gap-3 border-t border-hairline pt-3"
+            >
+              <p className="min-w-0 truncate text-[11.5px] text-foreground/85">
+                Ditambahkan — {detail.name}
+              </p>
+              <Link
+                to="/cart"
+                className="shrink-0 rounded-full bg-primary px-3.5 py-1.5 text-[11.5px] font-medium text-primary-foreground"
+              >
+                Lihat Keranjang
+              </Link>
+            </div>
+          ) : null}
         </div>
+      </div>
+
       </div>
 
       <BottomNav />
