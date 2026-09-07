@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createFileRoute, Link, notFound, useNavigate, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Check,
@@ -13,6 +13,7 @@ import { TopBar } from "@/components/orphic/top-bar";
 import { BottomNav } from "@/components/orphic/bottom-nav";
 import { SellerSignature } from "@/components/orphic/seller-signature";
 import { MediaGallery } from "@/components/orphic/product/media-gallery";
+import { useCart } from "@/lib/orphic-cart";
 import { getProductDetail, productDetails, type ProductDetail } from "@/lib/orphic-product-detail";
 
 export const Route = createFileRoute("/product/$id")({
@@ -46,6 +47,9 @@ export const Route = createFileRoute("/product/$id")({
 function ProductDetailPage() {
   const { detail } = Route.useLoaderData();
   const router = useRouter();
+  const navigate = useNavigate();
+  const cart = useCart();
+  const addedTimer = useRef<number | undefined>(undefined);
 
   const [variantId, setVariantId] = useState(
     detail.variants ? (detail.variants.options[1]?.id ?? detail.variants.options[0]!.id) : "",
@@ -56,6 +60,9 @@ function ProductDetailPage() {
   const [userId, setUserId] = useState("");
   const [server, setServer] = useState("");
   const [error, setError] = useState("");
+  const [added, setAdded] = useState(false);
+
+  useEffect(() => () => window.clearTimeout(addedTimer.current), []);
 
   const variant = useMemo(
     () => detail.variants?.options.find((o) => o.id === variantId),
@@ -69,15 +76,44 @@ function ProductDetailPage() {
   const needsId = Boolean(detail.requiresAccountId);
   const canBuy = !detail.soldOut && detail.actions.includes("buy");
 
-  function handleBuy() {
+  function buildConfig() {
     if (needsId && (!userId.trim() || !server.trim())) {
       setError("Masukkan User ID dan Server terlebih dahulu.");
-      return;
+      return null;
     }
     setError("");
-    setPurchase("loading");
-    window.setTimeout(() => setPurchase("done"), 900);
+    return needsId ? { userId: userId.trim(), server: server.trim() } : {};
   }
+
+  function handleBuy() {
+    const config = buildConfig();
+    if (!config) return;
+    const item = cart.addItem({
+      productId: detail.id,
+      variantId: detail.variants ? variantId : undefined,
+      config,
+    });
+    cart.setDirectItemKey(item.key);
+    setPurchase("loading");
+    window.setTimeout(() => {
+      setPurchase("done");
+      navigate({ to: "/checkout" });
+    }, 500);
+  }
+
+  function handleAddToCart() {
+    const config = buildConfig();
+    if (!config) return;
+    cart.addItem({
+      productId: detail.id,
+      variantId: detail.variants ? variantId : undefined,
+      config,
+    });
+    setAdded(true);
+    window.clearTimeout(addedTimer.current);
+    addedTimer.current = window.setTimeout(() => setAdded(false), 6000);
+  }
+
 
   return (
     <div className="min-h-screen bg-background">
