@@ -79,7 +79,9 @@ function CartPage() {
 
       <main className="pb-52 pt-20 md:pb-28 md:pt-28">
         <div className="mx-auto max-w-7xl px-6 md:px-10">
-          <p className="orphic-eyebrow">Keranjang</p>
+          <BackButton fallback="/" label="Kembali" />
+
+          <p className="orphic-eyebrow mt-6">Keranjang</p>
           <h1 className="orphic-display mt-3 text-[1.7rem] leading-tight text-foreground md:text-[2.3rem]">
             Tinjau sebelum lanjut
           </h1>
