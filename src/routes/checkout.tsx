@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { AlertCircle, ArrowLeft, CreditCard, ShieldCheck, Wallet } from "lucide-react";
+import { AlertCircle, CreditCard, ShieldCheck, Wallet } from "lucide-react";
+import { BackButton } from "@/components/orphic/back-button";
 import { TopBar } from "@/components/orphic/top-bar";
 import { BottomNav } from "@/components/orphic/bottom-nav";
 import { SellerSignature } from "@/components/orphic/seller-signature";
