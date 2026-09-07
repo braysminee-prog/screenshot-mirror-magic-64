@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Gamepad2, Search as SearchIcon, Store } from "lucide-react";
+import { BackButton } from "@/components/orphic/back-button";
 import { TopBar } from "@/components/orphic/top-bar";
 import { BottomNav } from "@/components/orphic/bottom-nav";
 import { SearchField } from "@/components/orphic/discovery/search-field";
