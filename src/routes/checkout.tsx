@@ -198,7 +198,7 @@ function CheckoutPage() {
                       onClick={() => {
                         setAttempted(true);
                         if (!canPay) return;
-                        navigate({ to: "/cart" });
+                        navigate({ to: "/orders" });
                       }}
                     />
                   </div>
@@ -221,7 +221,11 @@ function CheckoutPage() {
               </div>
               <button
                 type="button"
-                onClick={() => setAttempted(true)}
+                onClick={() => {
+                  setAttempted(true);
+                  if (!canPay) return;
+                  navigate({ to: "/orders" });
+                }}
                 disabled={!canPay}
                 className={`shrink-0 rounded-full px-5 py-3 text-[12.5px] font-medium transition-colors duration-300 ${
                   canPay
