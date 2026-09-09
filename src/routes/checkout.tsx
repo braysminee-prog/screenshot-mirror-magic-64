@@ -198,7 +198,7 @@ function CheckoutPage() {
                       onClick={() => {
                         setAttempted(true);
                         if (!canPay) return;
-                        navigate({ to: "/cart" });
+                        navigate({ to: "/orders" });
                       }}
                     />
                   </div>
@@ -221,7 +221,11 @@ function CheckoutPage() {
               </div>
               <button
                 type="button"
-                onClick={() => setAttempted(true)}
+                onClick={() => {
+                  setAttempted(true);
+                  if (!canPay) return;
+                  navigate({ to: "/orders" });
+                }}
                 disabled={!canPay}
                 className={`shrink-0 rounded-full px-5 py-3 text-[12.5px] font-medium transition-colors duration-300 ${
                   canPay
@@ -234,7 +238,7 @@ function CheckoutPage() {
             </div>
             <p className="mt-2 text-[11px] text-muted-foreground">
               {canPay
-                ? "Tahap pembayaran belum tersedia pada prototipe ini."
+                ? "Prototipe: pesanan langsung tercatat di halaman Pesanan."
                 : "Perbaiki item bermasalah di keranjang."}
             </p>
           </div>
@@ -271,14 +275,9 @@ function ContinueButton({
       </button>
       <p className="mt-3 text-[12px] text-muted-foreground">
         {canPay
-          ? "Pembayaran adalah tahap berikutnya dan belum dibangun pada prototipe ini."
+          ? "Pembayaran nyata tidak diproses. Kamu akan diarahkan ke halaman Pesanan."
           : "Ada item yang belum valid. Perbaiki dulu di keranjang."}
       </p>
-      {attempted && canPay ? (
-        <p className="mt-2 text-[12px] text-seller-foreground">
-          Prototipe: tahap pembayaran belum aktif.
-        </p>
-      ) : null}
     </div>
   );
 }

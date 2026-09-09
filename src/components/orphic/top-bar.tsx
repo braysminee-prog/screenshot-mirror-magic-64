@@ -7,6 +7,7 @@ const menuItems = [
   { label: "Beranda", to: "/" },
   { label: "Pencarian", to: "/search" },
   { label: "Keranjang", to: "/cart" },
+  { label: "Pesanan", to: "/orders" },
   { label: "Dompet", to: undefined },
   { label: "Komunitas", to: undefined },
   { label: "Shorts", to: undefined },
